@@ -1,7 +1,9 @@
 package com.senderToQueue.messageSenderToQueue.controllers;
 
 import com.senderToQueue.messageSenderToQueue.entities.EmailMessage;
+import com.senderToQueue.messageSenderToQueue.entities.SmsMessage;
 import com.senderToQueue.messageSenderToQueue.senders.EmailMessageSender;
+import com.senderToQueue.messageSenderToQueue.senders.SmsMessageSender;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,10 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/send/queue")
-public class EmailMessageController {
+public class MessageSenderController {
 
     @Autowired
     private EmailMessageSender emailMessageSender;
+
+    @Autowired
+    private SmsMessageSender smsMessageSender;
 
     @PostMapping("/email")
     public ResponseEntity<String> feedEmailQueue(@RequestBody @Valid EmailMessage emailMessage){
@@ -26,6 +31,13 @@ public class EmailMessageController {
 
         emailMessageSender.feedEmailQueue(emailMessage);
         return new ResponseEntity<>(responseMessage, HttpStatus.GONE);
+    }
+
+    @PostMapping("/sms")
+    public ResponseEntity<String> feedMsnQueue(@RequestBody @Valid SmsMessage smsMessage){
+
+        smsMessageSender.feedMsnQueue(smsMessage);
+        return new ResponseEntity<>("Message to msn queue sent", HttpStatus.GONE);
     }
 
 }
