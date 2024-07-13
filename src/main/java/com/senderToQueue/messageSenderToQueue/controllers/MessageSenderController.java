@@ -1,7 +1,7 @@
 package com.senderToQueue.messageSenderToQueue.controllers;
 
-import com.senderToQueue.messageSenderToQueue.entities.EmailMessage;
-import com.senderToQueue.messageSenderToQueue.entities.SmsMessage;
+import com.senderToQueue.messageSenderToQueue.dtos.EmailMessageDto;
+import com.senderToQueue.messageSenderToQueue.dtos.SmsMessageDto;
 import com.senderToQueue.messageSenderToQueue.senders.EmailMessageSender;
 import com.senderToQueue.messageSenderToQueue.senders.SmsMessageSender;
 import jakarta.validation.Valid;
@@ -24,20 +24,17 @@ public class MessageSenderController {
     private SmsMessageSender smsMessageSender;
 
     @PostMapping("/email")
-    public ResponseEntity<String> feedEmailQueue(@RequestBody @Valid EmailMessage emailMessage){
-
-        String responseMessage = String.format("Owner reference: %s\nEmail from: %s\nEmail to: %s\nSubject: %s\nText: %s",
-                emailMessage.getOwnerReference(), emailMessage.getEmailFrom(), emailMessage.getEmailTo(), emailMessage.getSubject(), emailMessage.getText());
+    public ResponseEntity<String> feedEmailQueue(@RequestBody @Valid EmailMessageDto emailMessage){
 
         emailMessageSender.feedEmailQueue(emailMessage);
-        return new ResponseEntity<>(responseMessage, HttpStatus.GONE);
+        return new ResponseEntity<>("Message sent to email queue", HttpStatus.GONE);
     }
 
     @PostMapping("/sms")
-    public ResponseEntity<String> feedMsnQueue(@RequestBody @Valid SmsMessage smsMessage){
+    public ResponseEntity<String> feedMsnQueue(@RequestBody @Valid SmsMessageDto smsMessage){
 
         smsMessageSender.feedMsnQueue(smsMessage);
-        return new ResponseEntity<>("Message to msn queue sent", HttpStatus.GONE);
+        return new ResponseEntity<>("Message sent to msn queue", HttpStatus.GONE);
     }
 
 }

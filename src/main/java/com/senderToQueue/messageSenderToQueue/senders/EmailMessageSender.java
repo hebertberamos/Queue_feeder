@@ -1,8 +1,7 @@
 package com.senderToQueue.messageSenderToQueue.senders;
 
-import com.senderToQueue.messageSenderToQueue.entities.EmailMessage;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.senderToQueue.messageSenderToQueue.dtos.EmailMessageDto;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +14,14 @@ public class EmailMessageSender {
     @Value("${rabbitmq.binding_key_email}")
     private String bindingKeyEmail;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+    public EmailMessageSender (AmqpTemplate queueSender){
+        this.queueSender = queueSender;
+    }
 
-    public void feedEmailQueue(EmailMessage message){
-        rabbitTemplate.convertAndSend(exchange, bindingKeyEmail, message);
+    private final AmqpTemplate queueSender;
+
+    public void feedEmailQueue(EmailMessageDto message){
+        queueSender.convertAndSend(exchange, bindingKeyEmail, message);
     }
 
 

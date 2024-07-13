@@ -1,8 +1,7 @@
 package com.senderToQueue.messageSenderToQueue.senders;
 
-import com.senderToQueue.messageSenderToQueue.entities.SmsMessage;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.senderToQueue.messageSenderToQueue.dtos.SmsMessageDto;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,13 +12,16 @@ public class SmsMessageSender {
     private String exchange;
 
     @Value("${rabbitmq.binding_key_sms}")
-    private String bindingKeyMsn;
+    private String bindingKeySms;
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+    public SmsMessageSender (AmqpTemplate queueSender){
+        this.queueSender = queueSender;
+    }
 
-    public void feedMsnQueue(SmsMessage message){
-        rabbitTemplate.convertAndSend(exchange, bindingKeyMsn, message);
+    private final AmqpTemplate queueSender;
+
+    public void feedMsnQueue(SmsMessageDto message){
+        queueSender.convertAndSend(exchange, bindingKeySms, message);
     }
 
 }
